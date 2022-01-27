@@ -13,44 +13,26 @@ namespace Golemo.Scripts
         private static nLog Log = new nLog("Bitcoin");
         private static Random rnd = new Random();
 
-        private static Dictionary<int, ColShape> Colsh = new Dictionary<int, ColShape>();
+        private static Dictionary<int, ColShape> Cols = new Dictionary<int, ColShape>();
         private static int BitcoinMultiplier;    //коэффициент
         private static int BitcoinsPayment = 36000;  //статичная цена
         private static int minMultiplier = 2; // минимальный коеффициент
         private static int maxMultiplier = 20; // максимальный коеффициеннтЙ
 
-        private void cfr_onEntityEnterColShape(ColShape shape, Player entity)
-        {
-            try
-            {
-                NAPI.Data.SetEntityData(entity, "INTERACTIONCHECK", shape.GetData<int>("INTERACT"));
-                UpdateLabelMulti();
-            }
-            catch (Exception ex) { Log.Write("gp_onEntityEnterColShape: " + ex.Message, nLog.Type.Error); }
-        }
-        private void cfr_onEntityExitColShape(ColShape shape, Player entity)
-        {
-            try
-            {
-                NAPI.Data.SetEntityData(entity, "INTERACTIONCHECK", 9134);
-            }
-            catch (Exception ex) { Log.Write("gp_onEntityExitColShape: " + ex.Message, nLog.Type.Error); }
-        }
         public TextLabel label = null;
         [ServerEvent(Event.ResourceStart)]
         public void onResourceStart() //создаем colshape
         {
             try
             {
-                Colsh.Add(4, NAPI.ColShape.CreateCylinderColShape(new Vector3(-557.05615, -187.82167, 37.22109), 1, 2, 0)); // get clothes
-                Colsh[4].OnEntityEnterColShape += cfr_onEntityEnterColShape;
-                Colsh[4].SetData("INTERACT", 9134);
+                Cols.Add(4, NAPI.ColShape.CreateCylinderColShape(new Vector3(-557.05615, -187.82167, 37.22109), 1, 2, 0)); // get clothes
+                Cols[4].OnEntityEnterColShape += (shape, player) => { try { player.SetData("INTERACTIONCHECK", 9134); } catch (Exception ex) { Console.WriteLine("Cols.OnEntityEnterColShape: " + ex.Message); }; };
+                Cols[4].OnEntityExitColShape += (shape, player) => { try { player.SetData("INTERACTIONCHECK", 0); } catch (Exception ex) { Console.WriteLine("Cols.OnEntityExitColShape: " + ex.Message);  };  };
                 NAPI.TextLabel.CreateTextLabel(Main.StringToU16("~w~Нажмите Е"), new Vector3(-557.05615, -187.82167, 40.22109) + new Vector3(0, 0, 1), 10F, 0.6F, 0, new Color(0, 180, 0));
                 label = NAPI.TextLabel.CreateTextLabel(Main.StringToU16($"~w~Курс еще не известен."), new Vector3(-557.05615, -187.82167, 38.22109) + new Vector3(0, 0, 1), 10F, 0.6F, 0, new Color(0, 180, 0));
                 NAPI.TextLabel.CreateTextLabel(Main.StringToU16("~r~Информатор Крипто"), new Vector3(-557.05615, -187.82167, 37.22109) + new Vector3(0, 0, 1), 10F, 0.6F, 0, new Color(0, 180, 0));
                 UpdateMultiplierInConsole();
                 UpdateLabelMulti();
-
             }
             catch (Exception e) { Log.Write("ResourceStart: " + e.Message, nLog.Type.Error); }
         }
@@ -112,7 +94,7 @@ namespace Golemo.Scripts
         }
         #endregion
          #region Покупка Лакивилспинов
-        [RemoteEvent("BuyLuckyWheelBIT:Server")] //Ивент для подключения
+        [RemoteEvent("BuyLuckyWheelBIT:Server")] //Ивент для подключени
         public static void BuyLuckyWheelBIT_Server(Player player, int id)
         {
             try
