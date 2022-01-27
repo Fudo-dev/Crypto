@@ -44,7 +44,6 @@ namespace Golemo.Scripts
             {
                 Colsh.Add(4, NAPI.ColShape.CreateCylinderColShape(new Vector3(-557.05615, -187.82167, 37.22109), 1, 2, 0)); // get clothes
                 Colsh[4].OnEntityEnterColShape += cfr_onEntityEnterColShape;
-                Colsh[4].OnEntityExitColShape += cfr_onEntityExitColShape;
                 Colsh[4].SetData("INTERACT", 9134);
                 NAPI.TextLabel.CreateTextLabel(Main.StringToU16("~w~Нажмите Е"), new Vector3(-557.05615, -187.82167, 40.22109) + new Vector3(0, 0, 1), 10F, 0.6F, 0, new Color(0, 180, 0));
                 label = NAPI.TextLabel.CreateTextLabel(Main.StringToU16($"~w~Курс еще не известен."), new Vector3(-557.05615, -187.82167, 38.22109) + new Vector3(0, 0, 1), 10F, 0.6F, 0, new Color(0, 180, 0));
