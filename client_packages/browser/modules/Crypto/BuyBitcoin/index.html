@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="fonts/font/stylesheet.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="css/index.css">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700" rel="stylesheet">
+	<script src="./js/library/vue.js"></script>
+</head>
+
+<body>
+	<div class="ped">
+		<div v-if="style == 0" class="dialog">
+			<div class="name">
+				Крис Ларсен
+			</div>
+			<div class="line"></div>
+			<div class="textblock">
+				<div class="text">
+				Здравствуйте, что-то хотели?
+				</div>
+			</div>
+			<div style="bottom: 8.5vh;" class="btns">
+				<div onclick="closemenu()" class="btnyes2">Спасибо, я не решился</div>
+				<div @click="buybit(0)" class="btnno">Да, Приобрести Биткойн</div>
+				<div @click="sellbit(0)" class="btnyes">Да, Продать Биткойн</div>
+				<div style="margin-top: 7vh;" @click="gostyle(2)" class="btnyes">Покажите мне товары за Биткойны</div>
+			</div>
+		</div>
+		<div v-if="style == 2" class="dialog">
+			<div class="name">
+				Крис Ларсен
+			</div>
+			<div class="line"></div>
+			<div class="textblock">
+				<div class="text" style="top: 1.5vh;">
+				Вот Список Товаров
+				</div>
+			</div>
+			<div style="bottom: 8.5vh;" class="btns">
+				<div @click="buyluckywheel(0)" class="btnyes">Приобрести Прокруты</div>
+				<div @click="gostyle(0)" class="btnno">Вернутся к продаже</div>
+			</div>
+		</div>
+
+	</div>
+    <script src="./js/index.js"></script>
+	<script src="./js/library/jquery-3.2.1.min.js"></script>
+</body>
+</html>

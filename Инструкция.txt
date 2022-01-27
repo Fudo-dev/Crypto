@@ -1,0 +1,166 @@
+Открываете Admin.cs
+
+после 
+        public static void giveMoney(Player player, Player target, int amount)
+        {
+            if (!Group.CanUseCmd(player, "givemoney")) return;
+            GameLog.Money($"player({Main.Players[player].UUID})", $"player({Main.Players[target].UUID})", amount, "admin");
+            MoneySystem.Wallet.Change(target, amount);
+            GameLog.Admin($"{player.Name}", $"giveMoney({amount})", $"{target.Name}");
+        }
+вставляете
+        public static void giveCrypto(Player player, Player target, int amount)
+        {
+            if (!Group.CanUseCmd(player, "givecrypto")) return;
+            GameLog.Money($"player({Main.Players[player].UUID})", $"player({Main.Players[target].UUID})", amount, "admin");
+            MoneySystem.Wallet.ChangeCrypto(target, amount);
+            GameLog.Admin($"{player.Name}", $"givecrypto({amount})", $"{target.Name}");
+        }
+
+===================================================================================================================================================
+                //////////////////      //     //           ////////                ////////////////                 
+                //      //      //       //   //            //    //                //            //            
+                //      //      //        // //             //    //                //            //          
+                //      //      //         ///              //    //                //            //           
+                //      //      //         //               //    //                //            //         
+                //////////////////        //          //////////////////////        //            //           
+                        //               //           //                  //        //            //             
+                        //              //            //                  //        //            //             
+                        //             //             //                  //        //            //           
+                        //            //              //                  //        ////////////////           
+===================================================================================================================================================
+В Characters.cs
+Находим
+Trigger.ClientEvent(player, "UpdateMoney", Money);
+После данной строчки ставим
+Trigger.ClientEvent(player, "UpdateCrypto", Crypto); 
+Это сделанно для тех кто будет подключать систему к худу для отображения
+
+Затем находим
+  Money = Convert.ToInt64(Row["money"]);
+Ниже вставляем(после данной строчки)
+  Crypto = Convert.ToInt64(Row["crypto"]);
+делаем это в двух местах!
+
+Находим 
+`money`={Money},
+после запятой вставляем
+`crypto`={Crypto},
+
+Где-то ниже будет
+`money`,
+После запятой вставляем
+`crypto`,
+
+Затем еще ниже будет
+{Money},
+После запятой вставляем
+{Crypto},
+
+===================================================================================================================================================
+В Commands.cs создаем команду для выдачи
+
+        [Command("givecrypto")] // дать крипты
+        public static void CMD_adminGiveCrypto(Player player, int id, int crypto)
+        {
+            try
+            {
+                if (Main.GetPlayerByID(id) == null)
+                {
+                    Notify.Send(player, NotifyType.Error, NotifyPosition.BottomCenter, $"Игрок с таким ID не найден", 3000);
+                    return;
+                }
+                Admin.giveCrypto(player, Main.GetPlayerByID(id), crypto);
+            }
+            catch (Exception e) { Log.Write("EXCEPTION AT \"CMD\":\n" + e.ToString(), nLog.Type.Error); }
+        }
+
+============================================================================================================================================
+В wallet.cs
+
+После ивента
+
+        public static bool Change(Player player, int Amount)
+        {
+            if (!Main.Players.ContainsKey(player)) return false;
+            if (Main.Players[player] == null) return false;
+            int temp = Convert.ToInt32(Main.Players[player].Money + Amount);
+            if (temp < 0) return false;
+            Main.Players[player].Money = temp;
+            Trigger.ClientEvent(player, "UpdateMoney", temp, Convert.ToString(Amount));
+            Trigger.ClientEvent(player, "AddCashMoney", true, Amount);
+            Trigger.ClientEvent(player, "soundAddCash");
+            NAPI.Task.Run(() =>
+            {
+                Trigger.ClientEvent(player, "AddCashMoney", false, Amount);
+            }, 4000);
+            MySQL.Query($"UPDATE characters SET money={Main.Players[player].Money} WHERE uuid={Main.Players[player].UUID}");
+            return true;
+        }
+Вставляем новый ивент
+
+        public static bool ChangeCrypto(Player player, int Amount)
+        {
+            if (!Main.Players.ContainsKey(player)) return false;
+            if (Main.Players[player] == null) return false;
+            int temp = Convert.ToInt32(Main.Players[player].Crypto + Amount);
+            if (temp < 0) return false;
+            Main.Players[player].Crypto = temp;
+            Trigger.ClientEvent(player, "UpdateCrypto", temp, Convert.ToString(Amount));
+            MySQL.Query($"UPDATE characters SET crypto={Main.Players[player].Crypto} WHERE uuid={Main.Players[player].UUID}");
+            return true;
+        }
+============================================================================================================================================
+В Character.cs (В SDK)
+
+После строчки
+ public long Money { get; set; } = 60000000;
+
+Вставляем  
+  public long Crypto { get; set; } = 0;
+
+============================================================================================================================================
+В main.cs создаем новый интеракт ивент
+
+                    case 9134:
+                        Scripts.Bitcoin.OpenCryptoPed(player);
+                        return;
+
+(вставляйте после drugfarm кейса, или того же realtor )
+============================================================================================================================================
+В index.js делаем подключение файла
+require('./BuyBitcoin.js');
+============================================================================================================================================
+Для тех кто будет делать подключение в худ
+Ставим Event в index.js
+
+
+mp.events.add('UpdateCrypto', function(temp, amount) {
+    mp.events.call('UpdateCryptoHud', temp, amount);
+});
+
+После ивента 
+
+
+mp.events.add('UpdateMoney', function (temp, amount) {
+  mp.events.call('UpdateMoneyHud', temp, amount);
+  mp.events.call('UpdateMoneyPhone', temp, amount);
+});
+============================================================================================================================================
+В базе данных, есть таблица characters.
+Нажимаем по ней правой кнопкой мыше и нажимаем design table
+Там после таблицы money вставляем те же параметры , что и money только название - Crypto
+============================================================================================================================================
+
+Сделано под Golemo RedAge , для обычного RedAge или для FiveUP RedAge, нужно будет чуток переписать!
+Автор системы - Fudo#2339
+                //////////////////      //     //           ////////                ////////////////                 
+                //      //      //       //   //            //    //                //            //            
+                //      //      //        // //             //    //                //            //          
+                //      //      //         ///              //    //                //            //           
+                //      //      //         //               //    //                //            //         
+                //////////////////        //          //////////////////////        //            //           
+                        //               //           //                  //        //            //             
+                        //              //            //                  //        //            //             
+                        //             //             //                  //        //            //           
+                        //            //              //                  //        ////////////////        
