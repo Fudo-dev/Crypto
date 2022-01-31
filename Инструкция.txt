@@ -1,6 +1,6 @@
-Îòêðûâàåòå Admin.cs
+Открываете Admin.cs
 
-ïîñëå 
+после 
         public static void giveMoney(Player player, Player target, int amount)
         {
             if (!Group.CanUseCmd(player, "givemoney")) return;
@@ -8,7 +8,7 @@
             MoneySystem.Wallet.Change(target, amount);
             GameLog.Admin($"{player.Name}", $"giveMoney({amount})", $"{target.Name}");
         }
-âñòàâëÿåòå
+вставляете
         public static void giveCrypto(Player player, Player target, int amount)
         {
             if (!Group.CanUseCmd(player, "givecrypto")) return;
@@ -29,45 +29,45 @@
                         //             //             //                  //        //            //           
                         //            //              //                  //        ////////////////           
 ===================================================================================================================================================
-Â Characters.cs
-Íàõîäèì
+В Characters.cs
+Находим
 Trigger.ClientEvent(player, "UpdateMoney", Money);
-Ïîñëå äàííîé ñòðî÷êè ñòàâèì
+После данной строчки ставим
 Trigger.ClientEvent(player, "UpdateCrypto", Crypto); 
-Ýòî ñäåëàííî äëÿ òåõ êòî áóäåò ïîäêëþ÷àòü ñèñòåìó ê õóäó äëÿ îòîáðàæåíèÿ
+Это сделанно для тех кто будет подключать систему к худу для отображения
 
-Çàòåì íàõîäèì
+Затем находим
   Money = Convert.ToInt64(Row["money"]);
-Íèæå âñòàâëÿåì(ïîñëå äàííîé ñòðî÷êè)
+Ниже вставляем(после данной строчки)
   Crypto = Convert.ToInt64(Row["crypto"]);
-äåëàåì ýòî â äâóõ ìåñòàõ!
+делаем это в двух местах!
 
-Íàõîäèì 
+Находим 
 `money`={Money},
-ïîñëå çàïÿòîé âñòàâëÿåì
+после запятой вставляем
 `crypto`={Crypto},
 
-Ãäå-òî íèæå áóäåò
+Где-то ниже будет
 `money`,
-Ïîñëå çàïÿòîé âñòàâëÿåì
+После запятой вставляем
 `crypto`,
 
-Çàòåì åùå íèæå áóäåò
+Затем еще ниже будет
 {Money},
-Ïîñëå çàïÿòîé âñòàâëÿåì
+После запятой вставляем
 {Crypto},
 
 ===================================================================================================================================================
-Â Commands.cs ñîçäàåì êîìàíäó äëÿ âûäà÷è
+В Commands.cs создаем команду для выдачи
 
-        [Command("givecrypto")] // äàòü êðèïòû
+        [Command("givecrypto")] // дать крипты
         public static void CMD_adminGiveCrypto(Player player, int id, int crypto)
         {
             try
             {
                 if (Main.GetPlayerByID(id) == null)
                 {
-                    Notify.Send(player, NotifyType.Error, NotifyPosition.BottomCenter, $"Èãðîê ñ òàêèì ID íå íàéäåí", 3000);
+                    Notify.Send(player, NotifyType.Error, NotifyPosition.BottomCenter, $"Игрок с таким ID не найден", 3000);
                     return;
                 }
                 Admin.giveCrypto(player, Main.GetPlayerByID(id), crypto);
@@ -76,9 +76,9 @@ Trigger.ClientEvent(player, "UpdateCrypto", Crypto);
         }
 
 ============================================================================================================================================
-Â wallet.cs
+В wallet.cs
 
-Ïîñëå èâåíòà
+После ивента
 
         public static bool Change(Player player, int Amount)
         {
@@ -97,7 +97,7 @@ Trigger.ClientEvent(player, "UpdateCrypto", Crypto);
             MySQL.Query($"UPDATE characters SET money={Main.Players[player].Money} WHERE uuid={Main.Players[player].UUID}");
             return true;
         }
-Âñòàâëÿåì íîâûé èâåíò
+Вставляем новый ивент
 
         public static bool ChangeCrypto(Player player, int Amount)
         {
@@ -111,28 +111,29 @@ Trigger.ClientEvent(player, "UpdateCrypto", Crypto);
             return true;
         }
 ============================================================================================================================================
-Â Character.cs (Â SDK)
+В Character.cs (В SDK)
 
-Ïîñëå ñòðî÷êè
+После строчки
  public long Money { get; set; } = 60000000;
 
-Âñòàâëÿåì  
+Вставляем  
   public long Crypto { get; set; } = 0;
 
 ============================================================================================================================================
 ============================================================================================================================================
-Â index.js äåëàåì ïîäêëþ÷åíèå ôàéëà
-require('./BuyBitcoin.js');
+В index.js делаем подключение файла
+require('./BuyBitcoin.js'
 ============================================================================================================================================
-Äëÿ òåõ êòî áóäåò äåëàòü ïîäêëþ÷åíèå â õóä
-Ñòàâèì Event â index.js
+Для тех кто будет делать подключение в худ
+Ставим Event в index.js
 
 
 mp.events.add('UpdateCrypto', function(temp, amount) {
     mp.events.call('UpdateCryptoHud', temp, amount);
+    mp.events.call('UpdateCryptoMenu', temp, amount);
 });
 
-Ïîñëå èâåíòà 
+После ивента 
 
 
 mp.events.add('UpdateMoney', function (temp, amount) {
@@ -140,13 +141,9 @@ mp.events.add('UpdateMoney', function (temp, amount) {
   mp.events.call('UpdateMoneyPhone', temp, amount);
 });
 ============================================================================================================================================
-Â áàçå äàííûõ, åñòü òàáëèöà characters.
-Íàæèìàåì ïî íåé ïðàâîé êíîïêîé ìûøå è íàæèìàåì design table
-Òàì ïîñëå òàáëèöû money âñòàâëÿåì òå æå ïàðàìåòðû , ÷òî è money òîëüêî íàçâàíèå - Crypto
-============================================================================================================================================
 
-Ñäåëàíî ïîä Golemo RedAge , äëÿ îáû÷íîãî RedAge èëè äëÿ FiveUP RedAge, íóæíî áóäåò ÷óòîê ïåðåïèñàòü!
-Àâòîð ñèñòåìû - Fudo#2339
+Сделано под Golemo RedAge , для обычного RedAge или для FiveUP RedAge, нужно будет чуток переписать!
+Автор системы - Fudo#2339
                 //////////////////      //     //           ////////                ////////////////                 
                 //      //      //       //   //            //    //                //            //            
                 //      //      //        // //             //    //                //            //          
