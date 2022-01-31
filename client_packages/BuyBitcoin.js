@@ -1,8 +1,19 @@
 let Bitcoin;
-mp.events.add('OpenBuyBitcoin', () => {
-	if (global.menuCheck() || Bitcoin != null) return;
-    global.menuOpen();
-	Bitcoin = mp.browsers.new('package://browser/modules/Crypto/BuyBitcoin/index.html');
+BitcoinM = mp.browsers.new('http://package/browser/modules/Crypto/BuyBitcoin/index.html');
+BitcoinN = false;
+mp.keys.bind(Keys.VK_O, false, function () { // F6 key report menu
+	if (!loggedin || chatActive || editing || cuffed || localplayer.isInAnyVehicle(true) || global.menuOpened || localplayer.getVariable('InDeath') == true || global.IsFalling) return;
+    if (!global.menuOpened) {
+        global.menuOpen();
+        mp.gui.cursor.visible = true;
+        BitcoinN = true;
+        BitcoinM.execute('CryptoMenu.active=true;');
+    } else {
+        BitcoinM.execute('CryptoMenu.active=false;');
+        global.menuClose();
+        BitcoinN = false;
+        mp.gui.cursor.visible = false
+    }
 });
 mp.events.add('BuyBitcoin', (id) => {
 	mp.events.call("CloseBuy");
@@ -17,9 +28,8 @@ mp.events.add('BuyLuckyWheel', (id) => {
 	mp.events.callRemote("BuyLuckyWheelBIT:Server", id);
 });
 mp.events.add('CloseBuy', () => {
-	if (Bitcoin == null) return;
-	Bitcoin.destroy();
-	Bitcoin = null;
-	global.menuClose();
-	mp.events.call("NPC.cameraOff", 1500);
+	if(board == null) return;
+    global.menuClose();
+	BitcoinM.execute('CryptoMenu.active=false');
+    BitcoinN = false;
 });
