@@ -10,10 +10,10 @@
 </head>
 
 <body>
-	<div class="ped">
+	<div class="ped"  v-if="active">
 		<div v-if="style == 0" class="dialog">
 			<div class="name">
-				Крис Ларсен
+				DARKNET
 			</div>
 			<div class="line"></div>
 			<div class="textblock">
@@ -30,7 +30,7 @@
 		</div>
 		<div v-if="style == 2" class="dialog">
 			<div class="name">
-				Крис Ларсен
+				DARKNET
 			</div>
 			<div class="line"></div>
 			<div class="textblock">
@@ -45,6 +45,7 @@
 		</div>
 
 	</div>
+</div>
     <script src="./js/index.js"></script>
 	<script src="./js/library/jquery-3.2.1.min.js"></script>
 </body>

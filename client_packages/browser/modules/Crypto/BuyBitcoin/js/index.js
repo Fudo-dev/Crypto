@@ -1,4 +1,4 @@
-var GovPedMenu = new Vue({
+var CryptoMenu = new Vue({
     el: ".ped",
     data: {
 	active: false,
